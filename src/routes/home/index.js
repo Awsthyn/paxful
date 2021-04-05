@@ -2,12 +2,13 @@ import style from "./style.css";
 import axios from "axios";
 import hmacSHA256 from "crypto-js/hmac-sha256";
 import { useEffect, useState } from "preact/hooks";
+const {PREACT_APP_API_KEY, PREACT_APP_API_SECRET} = process.env
+
 const API_URL = "https://paxful.com/api/offer/all";
-const API_KEY = "xxxxx";
-const API_SECRET = "xxxxx";
+const API_KEY = PREACT_APP_API_KEY
+const API_SECRET = PREACT_APP_API_SECRET
 const payload = `apikey=${API_KEY}&nonce=${Date.now()}&offer_type=buy&payment_method=payoneer&currency_code=USD`;
 const payload2 = `apikey=${API_KEY}&nonce=${Date.now()}&offer_type=sell&payment_method=bank-transfer&currency_code=ARS`;
-
 const seal = hmacSHA256(payload, API_SECRET);
 const seal2 = hmacSHA256(payload2, API_SECRET);
 
