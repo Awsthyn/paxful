@@ -28,6 +28,7 @@
   },
   "dependencies": {
     "axios": "^0.21.1",
+    "bootstrap": "^4.6.0",
     "crypto-js": "^4.0.0",
     "preact": "^10.3.2",
     "preact-cli-plugin-env-vars": "^1.2.1",

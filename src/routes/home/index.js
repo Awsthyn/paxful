@@ -2,11 +2,13 @@ import style from "./style.css";
 import axios from "axios";
 import hmacSHA256 from "crypto-js/hmac-sha256";
 import { useEffect, useState } from "preact/hooks";
-const {PREACT_APP_API_KEY, PREACT_APP_API_SECRET} = process.env
+import "bootstrap/dist/css/bootstrap.css";
+
+const { PREACT_APP_API_KEY, PREACT_APP_API_SECRET } = process.env;
 
 const API_URL = "https://paxful.com/api/offer/all";
-const API_KEY = PREACT_APP_API_KEY
-const API_SECRET = PREACT_APP_API_SECRET
+const API_KEY = PREACT_APP_API_KEY;
+const API_SECRET = PREACT_APP_API_SECRET;
 const payload = `apikey=${API_KEY}&nonce=${Date.now()}&offer_type=buy&payment_method=payoneer&currency_code=USD`;
 const payload2 = `apikey=${API_KEY}&nonce=${Date.now()}&offer_type=sell&payment_method=bank-transfer&currency_code=ARS`;
 const seal = hmacSHA256(payload, API_SECRET);
@@ -62,7 +64,6 @@ const Home = () => {
 
   return (
     <div class={style.home}>
-      <h1>Home</h1>
       <div
         style={{
           display: "flex",
@@ -72,11 +73,23 @@ const Home = () => {
         }}
       >
         <div>
-          <p>{selectedBuyer ? selectedBuyer.offer_owner_username : null}</p>
+          <p>
+            {selectedBuyer ? (
+              <a href={selectedBuyer.offer_link} target="_blank">
+                {selectedBuyer.offer_owner_username}
+              </a>
+            ) : null}
+          </p>
           <p>{selectedBuyer ? selectedBuyer.fiat_price_per_btc : null}</p>
         </div>
         <div>
-          <p>{selectedSeller ? selectedSeller.offer_owner_username : null}</p>
+          <p>
+            {selectedSeller ? (
+              <a href={selectedSeller.offer_link} target="_blank">
+                {selectedSeller.offer_owner_username}
+              </a>
+            ) : null}
+          </p>
           <p>{selectedSeller ? selectedSeller.fiat_price_per_btc : null}</p>
         </div>
       </div>
@@ -84,14 +97,15 @@ const Home = () => {
         {selectedBuyer && selectedSeller
           ? `Tipo de cambio: ${
               Math.round(
-                (selectedSeller.fiat_price_per_btc  /
-                  selectedBuyer.fiat_price_per_btc * 0.99) *
+                (selectedSeller.fiat_price_per_btc /
+                  selectedBuyer.fiat_price_per_btc) *
+                  0.99 *
                   100
               ) / 100
             }`
           : null}
       </h2>
-      <div style={{ width: "100%", display: "flex", flexDirection: "row" }}>
+      <div className="container-md d-flex flex-row flex-wrap">
         {buyers && (
           <Table
             title="USD to BTC"
@@ -116,15 +130,15 @@ const Home = () => {
 export default Home;
 
 const Table = ({ users, insidekey, setSelectedUser, title }) => (
-  <div style={{ width: "50%" }}>
+  <div style={{ width: 500 }}>
     <h2 style={{ textAlign: "center" }}>{title}</h2>
-    <table style={{ width: "100%" }}>
+    <table style={{ width: "95%" }} class="table">
       <thead style={{ textAlign: "left" }}>
         <tr>
           <th>User</th>
-          <th>Margin</th>
           <th>Price</th>
           <th>Reputation</th>
+          <th>Range</th>
         </tr>
       </thead>
       <tbody>
@@ -138,12 +152,12 @@ const Table = ({ users, insidekey, setSelectedUser, title }) => (
                 }
               >
                 <td>{user.offer_owner_username}</td>
-                <td>{user.margin}</td>
                 <td>{Math.round(user.fiat_price_per_btc)}</td>
                 <td>
                   {user.offer_owner_feedback_positive -
                     user.offer_owner_feedback_negative}
                 </td>
+                <td>{user.fiat_amount_range_min} - {user.fiat_amount_range_max}</td>
               </tr>
             ))
           : null}
